@@ -1,0 +1,247 @@
+parameters:
+  - name: environment
+    displayName: Environment Name
+    type: string
+    default: -- SELECT --
+    values:
+      - -- SELECT --
+      - scdev
+      - scint
+      - scprd
+pool: SYA-WINDOWS
+
+variables:
+  - name: urlFriendlyTeamProject
+    value: FAST-LEO
+  - name: VarGroupId
+    value: 2163
+  - name: VarGroupName
+    value: service_now_variable_grp
+  - name: FortifyAppName
+    value: Infrastructure
+  - name: FortifyAppVersion
+    value: '6.0'
+  - name: executionroleboundary
+    value: swiftcloud/RoleBoundaryExecutionSwiftCloud
+
+resources:
+  pipelines:
+  - pipeline: _PublishCFTemplates
+    source: CFTemplate
+    branch: main
+    # trigger: 
+    #   branches:
+    #   - azure-pipelines
+  # - pipeline: source_arti2
+  #   source: java_poc
+
+stages:
+- stage: scdev
+  variables: 
+  - name: AwsAccountNumber
+    value: "301609943429"
+  condition: eq('${{parameters.environment }}', 'scdev')
+  jobs:
+  - job: deploy 
+    steps:
+    - task: ReplaceTokens@1
+      displayName: 'Replace tokens in CF template'
+      inputs:
+        sourcePath: '$(Pipeline.Workspace)/s/_PublishCFTemplates/drop'
+        filePattern: '*.yaml'
+        tokenRegex: '(\w+)'
+    - task: CloudFormationCreateOrUpdateStack@1
+      displayName: 'Create/Update Stack: fast-leo-iam-test-1'
+      inputs:
+        awsCredentials: 'buildAgent-leo@SwiftCloud-Leo-Dev'
+        regionName: 'us-west-2'
+        stackName: 'fast-leo-iam-fasts3-access-test'
+        templateFile: '$(Pipeline.Workspace)/s/_PublishCFTemplates/drop/iamrole-fasts3-access.yaml'
+        templateParametersSource: inline
+        templateParameters: |
+          []
+        # templateParameters: |
+        #   [
+        #     {
+        #       "ParameterKey":"LambdaFunctionARN",
+        #       "ParameterValue":"$(LambdaFunctionARN)"},
+        #     {
+        #       "ParameterKey":"FastAccountnumber",
+        #       "ParameterValue":"$(FastAccountnumber)"}
+        #   ]
+        capabilityAutoExpand: true
+        tags: |
+          appl = fast-leo
+          portfolio = portfolio-id06
+          enddate = 2099-12-31
+          environment = scdev
+          Name = fast-leo
+          region = us-west-2
+          supportchannel = mail:leoassist@symetra.com
+          supportedby = sya
+
+- stage: scint
+  variables: 
+  - name: AwsAccountNumber
+    value: "782771878128"
+  condition: eq('${{parameters.environment }}', 'scint')
+  jobs:
+  - job: deploy 
+    steps:
+    - task: ReplaceTokens@1
+      displayName: 'Replace tokens in CF template'
+      inputs:
+        sourcePath: '$(Pipeline.Workspace)/_PublishCFTemplates/drop'
+        filePattern: '*.yaml'
+        tokenRegex: '(\w+)'
+    - task: CloudFormationCreateOrUpdateStack@1
+      displayName: 'Create/Update Stack: fast-leo-iam-fasts3-access'
+      inputs:
+        awsCredentials: 'buildAgent-leo@SwiftCloud-Leo-Int'
+        regionName: 'us-west-2'
+        stackName: 'fast-leo-iam-fasts3-access-test'
+        templateFile: '$(Pipeline.Workspace)/_PublishCFTemplates/drop/iamrole-fasts3-access.yaml'
+        templateParametersSource: inline
+        templateParameters: '[]'
+        capabilityAutoExpand: true
+        tags: |
+          appl = fast-leo
+          portfolio = portfolio-id06
+          enddate = 2099-12-31
+          environment = scint
+          Name = fast-leo
+          region = us-west-2
+          supportchannel = mail:leoassist@symetra.com
+          supportedby = sya
+
+## This Stage updates the VariableGroup with snow strt, end date & fortify scan date
+- stage: UpdateSnowDates
+  condition: eq('${{parameters.environment }}', 'scprd')
+  jobs: 
+    - job:
+      displayName: 'UpdateCRChangeWindow'
+      pool:
+        name: SYA-LINUX
+      steps:
+      - bash: |
+          START_TIME=$(date '+%FT%TZ')
+          END_TIME=$(date -d '+23 hour' '+%FT%TZ')
+          SCAN_DAY=$(date '+%m-%d-%Y')
+          curl -fL -XPUT -H "Authorization:Bearer $(System.AccessToken)" -H "Content-Type:application/json" \
+          -d '{
+            "id": "$(VarGroupId)",
+            "type": "Vsts",
+            "name": "$(VarGroupName)",
+            "variables": {
+              "StartDateTime": {
+                "isSecret": false,
+                "value": "'"$START_TIME"'"
+              },
+              "EndDateTime": {
+                "isSecret": false,
+                "value": "'"$END_TIME"'"
+              },
+              "FortifyScanDate": {
+                "isSecret": false,
+                "value": "'"$SCAN_DAY"'"
+              }
+            }
+          }' \
+          $(System.TeamFoundationCollectionUri)$(urlFriendlyTeamProject)/_apis/distributedtask/variablegroups/$(VarGroupId)?api-version=5.0-preview.1
+        displayName: 'Set variables in variable group for CR change window'
+- stage: SCPRD
+  dependsOn: UpdateSnowDates 
+  variables: 
+  - name: AwsAccountNumber
+    value: "291994354727"
+  condition: | 
+      and
+      ( 
+        eq('${{parameters.environment }}', 'scprd'),
+        eq(dependencies.UpdateSnowDates.result, 'Succeeded')
+      )
+  jobs:
+    - deployment: 'Deploy'
+      displayName: 'Deploy to Scprd'
+      environment: 'Scprd'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: ReplaceTokens@1
+                displayName: 'Replace tokens in CF template'
+                inputs:
+                  sourcePath: '$(Pipeline.Workspace)/_PublishCFTemplates/drop'
+                  filePattern: '*.yaml'
+                  tokenRegex: '(\w+)'
+              - task: CloudFormationCreateOrUpdateStack@1
+                displayName: 'Create/Update Stack: fast-leo-iam-fasts3-access-test'
+                inputs:
+                  awsCredentials: 'buildAgent-leo@SwiftCloud-Leo-Prd'
+                  regionName: 'us-west-2'
+                  stackName: 'fast-leo-iam-fasts3-access-test'
+                  templateFile: '$(Pipeline.Workspace)/_PublishCFTemplates/drop/iamrole-fasts3-access.yaml'
+                  templateParametersSource: inline
+                  templateParameters: '[]'
+                  capabilityAutoExpand: true
+                  tags: |
+                    appl = fast-leo
+                    portfolio = portfolio-id06
+                    enddate = 2099-12-31
+                    environment = scint
+                    Name = fast-leo
+                    region = us-west-2
+                    supportchannel = mail:leoassist@symetra.com
+                    supportedby = sya
+    ## Keep build indefinitely (Required for all deployments into a Production environment)
+    - job: keep_always
+      pool: SYA-LINUX
+      condition: succeeded()
+      dependsOn: Deploy
+      steps:
+        - bash: |
+              PROJECTNAME="$(System.TeamProject)"
+              url="$(System.TeamFoundationCollectionUri)${PROJECTNAME// /%20}/_apis/build/builds/$(Build.BuildId)?api-version=2.0"
+              curl -fL -XPATCH -H "Authorization:Bearer $(System.AccessToken)" -H "Content-Type:application/json" \
+              -d '{
+                  "keepforever":true
+              }' $url
+          displayName: 'Keep this build indefinitely'
+    ## Cancel if failed deployment
+    - job: UpdateFailedChangeRequest
+      displayName: Cancel Failed Change Request in ServiceNow
+      pool: server
+      dependsOn: Deploy
+      condition: failed()
+      steps:
+        - task: UpdateServiceNowChangeRequest@2
+          inputs:
+            ServiceNowConnection: 'ServiceNow DEV'
+            NewStatus: '4'
+            CloseCode: 'canceled'
+            CloseNotes: 'Deployment Failed'
+            otherParameters: '{"u_close_code":"canceled","u_close_notes":"Deployment failed","u_state":"4"}'
+    ## Successful deployment
+    - job: UpdateSuccessfulChangeRequest
+      displayName: Close Successful Change Request in ServiceNow
+      pool: server
+      dependsOn: Deploy
+      steps:
+        - task: UpdateServiceNowChangeRequest@2
+          inputs:
+            ServiceNowConnection: 'ServiceNow DEV'
+            NewStatus: '3'
+            CloseCode: 'successful'
+            CloseNotes: 'Deployment successful'
+            otherParameters: '{"u_close_code":"successful","u_close_notes":"all good"}'
+        - task: Delay@1
+          displayName: 'Delay by 1 minutes for ServiceNow workflow'
+          inputs:
+            delayForMinutes: 1
+        - task: UpdateServiceNowChangeRequest@2
+          inputs:
+            ServiceNowConnection: 'ServiceNow DEV'
+            NewStatus: '3'
+            CloseCode: 'successful'
+            CloseNotes: 'Deployment successful'
+            otherParameters: '{"u_close_code":"successful","u_close_notes":"all good"}'
