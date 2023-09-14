@@ -1,0 +1,59 @@
+- stage: 'Staging'
+  displayName: 'Staging' #Name displayed when viewing in Azure DevOps
+  jobs:
+   - job: test
+     steps:
+       - download: source_arti1
+         artifact: martech
+       - task: PowerShell@2
+         inputs:
+           targetType: 'inline'
+           script: |
+             $START_TIME = Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ"
+             $END_TIME = (Get-Date).AddHours(23).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+             $SCAN_DAY = Get-Date -Format "MM-dd-yyyy"
+             
+             $id = 1
+                 $header = @{
+                  "Authorization" = "Bearer $(System.AccessToken)"
+                }
+              $Body1 = @{
+                      id = $id
+                      type = 'Vsts'
+                      name = "$(VarGroupName)"
+                      variables = @{
+                        StartDateTime = @{
+                          isSecret = 'false'
+                          value          = $START_TIME                        
+                        }
+                            EndDateTime = @{
+                            isSecret = 'false'
+                            value          = $END_TIME
+                          
+                          }
+
+                      }
+                  
+                }
+              # This is using some environment variables provided by the pipeline to build the URL
+              $url = ("$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/distributedtask/variablegroups/{0}?api-version=5.0-preview.1" -f $id)
+              write-host $url              
+              # You might find it useful to us a GET method to grab the variable group, update it and then convert it to this json string rather than doing this here
+              #$json = '{"id":"1","type":"Vsts","name":"test_var_id","variables":{"test":{"isSecret":false,"value":"20hhh"}}}'
+              write-host $json
+              write-host $(System.AccessToken)
+              $pipeline = Invoke-RestMethod -Uri $url -Method Put -Body ($Body1 | convertto-json) -ContentType "application/json" -Headers $header -verbose
+                        
+             Write-Host "Hello World"
+  #   displayName: Staging Deployment #Name displayed in UI
+  #   pool: viv-poc
+  #   environment: dev
+  #   strategy:
+  #     runOnce:
+  #       deploy:
+  #         steps:
+  #         - task: PowerShell@2
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               cd $(Pipeline.Workspace) ;  ls
