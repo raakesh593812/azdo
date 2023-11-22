@@ -1,0 +1,156 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+parameters:
+  - name: build_option
+    displayName: Buid option
+    type: string
+    default: Only_CI
+    values:
+      - Only_CI
+      - Both_CICD
+      - Only_Coverity
+      - Only_Sonar
+      - Both_sonar_coverity
+variables:
+  - group: test_java_poc_id
+  - name: VarGroupName
+    value: test_java_poc_id
+  - name: system.debug
+    value : 'true'
+  - name: msg
+    value: $(Build.SourceVersionMessage)
+  - name: msg1
+    value: 'feature'
+  - name: msg2
+    value: ''
+  - name: env
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/feature') }}:
+      value: Develop
+   
+trigger:
+  batch: true
+  branches:
+    include:
+    - feature/*
+    - devlopment
+  paths:
+     exclude:
+     - azure-pipelines.yml
+     - AzDo/*
+
+pool: viv-poc
+
+stages:
+- stage: pre_build
+  pool: viv-poc
+  displayName: Build stage ${{ variables['env'] }}
+  jobs:
+    - job: getCommitMSG
+      steps:
+        - task: PowerShell@2
+          inputs:
+           targetType: 'inline'
+           script: |
+            # $build_msg = $(Build.SourceVersionMessage)             
+             $id = 1
+             $header = @{
+                  "Authorization" = "Bearer $(System.AccessToken)"
+                }
+              $Body1 = @{
+                      id = $id
+                      type = 'Vsts'
+                      name = "$(VarGroupName)"
+                      variables = @{
+                        build_msg = @{
+                          isSecret = 'false'
+                          value          = '$(Build.SourceVersionMessage)'                     
+                        }
+                                            }                  
+                }
+              # This is using some environment variables provided by the pipeline to build the URL
+              $url = ("$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/distributedtask/variablegroups/{0}?api-version=5.0-preview.1" -f $id)
+              write-host $url              
+              write-host $json
+              write-host $(System.AccessToken)
+              $pipeline = Invoke-RestMethod -Uri $url -Method Put -Body ($Body1 | convertto-json) -ContentType "application/json" -Headers $header -verbose
+                        
+             Write-Host "Hello World"
+- stage: Build
+  condition: or(eq('${{parameters.build_option }}', 'Only_CI'),eq('${{parameters.build_option }}', 'Both_CICD'))
+  pool: viv-poc
+  displayName: Build stage ${{ variables['env'] }}
+  jobs:  
+  - job: Build
+    displayName: Build
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: 'default'
+        mavenVersionOption: 'Default'
+        mavenOptions: '-Xmx3072m'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(system.defaultworkingDirectory)'
+        Contents: '**/*.war'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: $(Build.SourceVersionMessage)
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+    - task: printAllVariables@1
+      condition: |
+        and
+        ( 
+          or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'),
+            eq(variables['Build.sourceBranchName'], 'devlopment')
+            ),
+          or(eq('${{parameters.build_option }}', 'Both_CICD'),
+            eq(variables['msg'], 'feature')
+          )
+            
+        )
+
+- stage: Deploy
+  condition: |
+    and
+    ( succeeded(), 
+      or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'),
+        eq(variables['Build.sourceBranchName'], 'devlopment')
+        ),
+       or(eq('${{parameters.build_option }}', 'Both_CICD'),
+        eq(variables.build_msg, 'feature')
+       ),
+       eq(dependencies.Build.result, 'Succeeded')
+         
+    )
+  displayName: 'Deploy to ${{ variables.Environment }}stage'
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    condition: or(eq(variables['msg1'], 'feature'),eq(variables['Build.SourceVersionMessage'], 'feature'))
+    pool: viv-poc
+    environment: Manual
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: '$(System.DefaultWorkingDirectory)'
+              Contents: '**/*.war'
+              TargetFolder: '$(System.DefaultWorkingDirectory)/b'
