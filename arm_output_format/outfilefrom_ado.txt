@@ -1,0 +1,145 @@
+2023-12-19T06:57:48.3853572Z ##[section]Starting: printAllVariables
+2023-12-19T06:57:48.4131728Z ==============================================================================
+2023-12-19T06:57:48.4132171Z Task         : Print all variables
+2023-12-19T06:57:48.4132395Z Description  : Print to the screen all the available varaibles and their values for this job. Cross platform (work on Windows/Linux/Mac)
+2023-12-19T06:57:48.4132853Z Version      : 1.0.0
+2023-12-19T06:57:48.4133072Z Author       : 
+2023-12-19T06:57:48.4133252Z Help         : [More Information](https://github.com/shayki5/azure-devops-print-all-variables)
+2023-12-19T06:57:48.4133607Z ==============================================================================
+2023-12-19T06:57:48.7376110Z All the variables in this format: [variable name] => value
+2023-12-19T06:57:48.7376466Z AGENT_ENABLE_PIPELINEARTIFACT_LARGE_CHUNK_SIZE => true
+2023-12-19T06:57:48.7377253Z AZP_75787_ENABLE_COLLECT => true
+2023-12-19T06:57:48.7377578Z AZP_AGENT_CHECK_FOR_TASK_DEPRECATION => false
+2023-12-19T06:57:48.7377871Z AZP_AGENT_IGNORE_VSTSTASKLIB => true
+2023-12-19T06:57:48.7378086Z AZP_PS_ENABLE_INVOKE_PROCESS => true
+2023-12-19T06:57:48.7378622Z AZURE_HTTP_USER_AGENT => VSTS_a4feb9b5-a2ae-43ee-ac85-546e129c816f_build_18_0
+2023-12-19T06:57:48.7378804Z GIT_TERMINAL_PROMPT => 0
+2023-12-19T06:57:48.7379115Z MSDEPLOY_HTTP_USER_AGENT => VSTS_a4feb9b5-a2ae-43ee-ac85-546e129c816f_build_18_0
+2023-12-19T06:57:48.7379304Z System.JobPositionInPhase => 1
+2023-12-19T06:57:48.7379446Z System.TotalJobsInPhase => 1
+2023-12-19T06:57:48.7379585Z USE_MSAL => true
+2023-12-19T06:57:48.7379716Z USE_MSDEPLOY_TOKEN_AUTH => true
+2023-12-19T06:57:48.7379890Z VSTSAGENT_CONTINUE_AFTER_CANCEL_PROCESSTREEKILL_ATTEMPT => true
+2023-12-19T06:57:48.7380053Z VSTSAGENT_DOCKER_ACTION_RETRIES => true
+2023-12-19T06:57:48.7380335Z VSTS_PROCESS_LOOKUP_ID => vsts_e2c212da-49e9-4e8c-bd24-64ed602fb4f9
+2023-12-19T06:57:48.7380488Z agent.LogToBlobstorageService => true
+2023-12-19T06:57:48.7380659Z agent.RootDirectory => C:\agent\_work
+2023-12-19T06:57:48.7380984Z agent.ServerOMDirectory => C:\agent\externals\vstsom
+2023-12-19T06:57:48.7381276Z agent.TempDirectory => C:\agent\_work\_temp
+2023-12-19T06:57:48.7381418Z agent.ToolsDirectory => C:\agent\_work\_tool
+2023-12-19T06:57:48.7381753Z agent.builddirectory => C:\agent\_work\15
+2023-12-19T06:57:48.7382889Z agent.cloudid => 
+2023-12-19T06:57:48.7383240Z agent.disablelogplugin.TestFilePublisherPlugin => true
+2023-12-19T06:57:48.7383469Z agent.disablelogplugin.TestResultLogPlugin => true
+2023-12-19T06:57:48.7383623Z agent.homedirectory => C:\agent
+2023-12-19T06:57:48.7383758Z agent.id => 9
+2023-12-19T06:57:48.7383883Z agent.isselfhosted => 1
+2023-12-19T06:57:48.7384011Z agent.jobname => Job
+2023-12-19T06:57:48.7384149Z agent.jobstatus => Succeeded
+2023-12-19T06:57:48.7385239Z agent.machinename => KRISHNASRIVASTA
+2023-12-19T06:57:48.7385549Z agent.name => len-laptop
+2023-12-19T06:57:48.7385688Z agent.os => Windows_NT
+2023-12-19T06:57:48.7385818Z agent.osarchitecture => X64
+2023-12-19T06:57:48.7385964Z agent.readOnlyVariables => true
+2023-12-19T06:57:48.7386114Z agent.retainDefaultEncoding => false
+2023-12-19T06:57:48.7386278Z agent.taskRestrictionsEnforcementMode => Enabled
+2023-12-19T06:57:48.7386441Z agent.useWorkspaceId => true
+2023-12-19T06:57:48.7386573Z agent.version => 3.224.1
+2023-12-19T06:57:48.7386716Z agent.workfolder => C:\agent\_work
+2023-12-19T06:57:48.7386858Z build.Repository.name => ARM_Template_poc
+2023-12-19T06:57:48.7387073Z build.artifactstagingdirectory => C:\agent\_work\15\a
+2023-12-19T06:57:48.7387239Z build.binariesdirectory => C:\agent\_work\15\b
+2023-12-19T06:57:48.7387388Z build.buildId => 340
+2023-12-19T06:57:48.7387521Z build.buildNumber => 20231219.9
+2023-12-19T06:57:48.7387652Z build.buildUri => vstfs:///Build/Build/340
+2023-12-19T06:57:48.7387789Z build.containerId => 30740608
+2023-12-19T06:57:48.7387915Z build.definitionFolderPath => \
+2023-12-19T06:57:48.7388070Z build.definitionName => ARM_Template_poc
+2023-12-19T06:57:48.7389406Z build.definitionVersion => 1
+2023-12-19T06:57:48.7389540Z build.queuedBy => Viswanath A
+2023-12-19T06:57:48.7389858Z build.queuedById => 29c18891-00a5-60ea-8468-7c6b3c853b1d
+2023-12-19T06:57:48.7390013Z build.reason => Manual
+2023-12-19T06:57:48.7390164Z build.repository.git.submodulecheckout => False
+2023-12-19T06:57:48.7390467Z build.repository.id => 13abc3d1-80a2-49bd-a688-114a581ab026
+2023-12-19T06:57:48.7390658Z build.repository.localpath => C:\agent\_work\15\s
+2023-12-19T06:57:48.7390812Z build.repository.provider => TfsGit
+2023-12-19T06:57:48.7391020Z build.repository.uri => https://ABCViswanath@dev.azure.com/ABCViswanath/ABCViswanath/_git/ARM_Template_poc
+2023-12-19T06:57:48.7391240Z build.requestedFor => Viswanath A
+2023-12-19T06:57:48.7391414Z build.requestedForEmail => ABC.Viswanath@outlook.com
+2023-12-19T06:57:48.7391725Z build.requestedForId => 29c18891-00a5-60ea-8468-7c6b3c853b1d
+2023-12-19T06:57:48.7391892Z build.sourceBranch => refs/heads/dev
+2023-12-19T06:57:48.7392037Z build.sourceBranchName => dev
+2023-12-19T06:57:48.7392203Z build.sourceVersion => cfd8e2590906cd8614235801a3eb7ab20661d919
+2023-12-19T06:57:48.7392357Z build.sourceVersionAuthor => Viswanath A
+2023-12-19T06:57:48.7392523Z build.sourceVersionMessage => Updated azuredeploy.json
+2023-12-19T06:57:48.7392950Z build.sourcesdirectory => C:\agent\_work\15\s
+2023-12-19T06:57:48.7393304Z build.stagingdirectory => C:\agent\_work\15\a
+2023-12-19T06:57:48.7393526Z common.testresultsdirectory => C:\agent\_work\15\TestResults
+2023-12-19T06:57:48.7393740Z pipeline.workspace => C:\agent\_work\15
+2023-12-19T06:57:48.7395906Z pocoutput => {"nameResult":{"type":"String","value":"Test Person"},"arrayOutput":{"type":"Array","value":[1,true,"example string"]},"nameFromObject":{"type":"String","value":"test name"},"nameObject":{"type":"Object","value":{"name":"test name","id":"123-abc","isCurrent":true,"tier":1}}}
+2023-12-19T06:57:48.7397081Z pocoutput.arrayOutput.type => "Array"
+2023-12-19T06:57:48.7397531Z pocoutput.arrayOutput.value.0 => 1
+2023-12-19T06:57:48.7397944Z pocoutput.arrayOutput.value.1 => true
+2023-12-19T06:57:48.7398282Z pocoutput.arrayOutput.value.2 => "example string"
+2023-12-19T06:57:48.7398606Z pocoutput.nameFromObject.type => "String"
+2023-12-19T06:57:48.7398923Z pocoutput.nameFromObject.value => "test name"
+2023-12-19T06:57:48.7399220Z pocoutput.nameObject.type => "Object"
+2023-12-19T06:57:48.7399636Z pocoutput.nameObject.value.id => "123-abc"
+2023-12-19T06:57:48.7399957Z pocoutput.nameObject.value.isCurrent => true
+2023-12-19T06:57:48.7400267Z pocoutput.nameObject.value.name => "test name"
+2023-12-19T06:57:48.7400569Z pocoutput.nameObject.value.tier => 1
+2023-12-19T06:57:48.7400981Z pocoutput.nameResult.type => "String"
+2023-12-19T06:57:48.7401420Z pocoutput.nameResult.value => "Test Person"
+2023-12-19T06:57:48.7401990Z resources.triggeringAlias => 
+2023-12-19T06:57:48.7402263Z resources.triggeringCategory => 
+2023-12-19T06:57:48.7402508Z system => build
+2023-12-19T06:57:48.7402825Z system.TeamFoundationServerUri => https://dev.azure.com/ABCViswanath/
+2023-12-19T06:57:48.7408033Z system.accessToken => ***
+2023-12-19T06:57:48.7408366Z system.artifactsdirectory => C:\agent\_work\15\a
+2023-12-19T06:57:48.7408941Z system.collectionId => a4feb9b5-a2ae-43ee-ac85-546e129c816f
+2023-12-19T06:57:48.7409289Z system.collectionUri => https://dev.azure.com/ABCViswanath/
+2023-12-19T06:57:48.7409582Z system.culture => en-US
+2023-12-19T06:57:48.7409888Z system.defaultworkingdirectory => C:\agent\_work\15\s
+2023-12-19T06:57:48.7410170Z system.definitionId => 18
+2023-12-19T06:57:48.7410453Z system.definitionName => ARM_Template_poc
+2023-12-19T06:57:48.7410757Z system.enableAccessToken => SecretVariable
+2023-12-19T06:57:48.7411024Z system.hosttype => build
+2023-12-19T06:57:48.7411281Z system.isScheduled => False
+2023-12-19T06:57:48.7411526Z system.isazurevm => 0
+2023-12-19T06:57:48.7411884Z system.isdockercontainer => 0
+2023-12-19T06:57:48.7412145Z system.jobAttempt => 1
+2023-12-19T06:57:48.7413125Z system.jobDisplayName => Job
+2023-12-19T06:57:48.7413739Z system.jobId => 12f1170f-54f2-53f3-20dd-22fc7dff55f9
+2023-12-19T06:57:48.7414067Z system.jobIdentifier => Job.__default
+2023-12-19T06:57:48.7414335Z system.jobName => __default
+2023-12-19T06:57:48.7414609Z system.jobParallelismTag => Private
+2023-12-19T06:57:48.7414865Z system.jobTimeout => 60
+2023-12-19T06:57:48.7415120Z system.phaseAttempt => 1
+2023-12-19T06:57:48.7415388Z system.phaseDisplayName => Job
+2023-12-19T06:57:48.7415896Z system.phaseId => 3a3a2a60-14c7-570b-14a4-fa42ad92f52a
+2023-12-19T06:57:48.7416204Z system.phaseName => Job
+2023-12-19T06:57:48.7416747Z system.pipelineStartTime => 2023-12-19 06:57:18+00:00
+2023-12-19T06:57:48.7417337Z system.planId => 6be5d1e2-300f-4ad1-b8fd-4ead080ccd8f
+2023-12-19T06:57:48.7417650Z system.postLinesSpeed => 500
+2023-12-19T06:57:48.7417939Z system.pullRequest.isFork => False
+2023-12-19T06:57:48.7418202Z system.servertype => Hosted
+2023-12-19T06:57:48.7418460Z system.stageAttempt => 1
+2023-12-19T06:57:48.7418729Z system.stageDisplayName => __default
+2023-12-19T06:57:48.7419262Z system.stageId => 96ac2280-8cb4-5df5-99de-dd2da759617d
+2023-12-19T06:57:48.7419571Z system.stageName => __default
+2023-12-19T06:57:48.7419904Z system.taskDefinitionsUri => https://dev.azure.com/ABCViswanath/
+2023-12-19T06:57:48.7420256Z system.taskDisplayName => printAllVariables
+2023-12-19T06:57:48.7420817Z system.taskInstanceId => 453d391b-d821-5762-00a8-d6da1cbeaa73
+2023-12-19T06:57:48.7421164Z system.taskInstanceName => printAllVariables
+2023-12-19T06:57:48.7421549Z system.teamFoundationCollectionUri => https://dev.azure.com/ABCViswanath/
+2023-12-19T06:57:48.7421903Z system.teamProject => ABCViswanath
+2023-12-19T06:57:48.7422438Z system.teamProjectId => 2b60d907-61e2-45b5-accb-1aa7f0622d77
+2023-12-19T06:57:48.7423014Z system.timelineId => 6be5d1e2-300f-4ad1-b8fd-4ead080ccd8f
+2023-12-19T06:57:48.7423337Z system.workfolder => C:\agent\_work
+2023-12-19T06:57:48.7423621Z task.displayname => printAllVariables
+2023-12-19T06:57:48.7592899Z task.skipTranslatorForCheckout => False
+2023-12-19T06:57:48.7600048Z (node:20128) Warning: Use Cipheriv for counter mode of aes-256-ctr
+2023-12-19T06:57:48.7600493Z (node:20128) Warning: Use Cipheriv for counter mode of aes-256-ctr
+2023-12-19T06:57:48.7600869Z (node:20128) Warning: Use Cipheriv for counter mode of aes-256-ctr
+2023-12-19T06:57:48.7601239Z (node:20128) Warning: Use Cipheriv for counter mode of aes-256-ctr
+2023-12-19T06:57:48.7665841Z ##[section]Finishing: printAllVariables
