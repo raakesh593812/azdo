@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+      "parameters": {
+        "exampleObject": {
+            "type": "object",
+            "defaultValue": {
+                "name": "test name",
+                "id": "123-abc",
+                "isCurrent": true,
+                "tier": 1
+            }
+        }
+    },
+  "variables": {
+    "user": {
+      "user-name": "Test Person"
+    },
+      "mixedArray": [
+      1,
+    true,
+    "example string"
+  ]
+  },
+  "resources": [
+  ],
+  "outputs": {
+    "nameResult": {
+      "type": "string",
+      "value": "[variables('user')['user-name']]"
+    },
+      "arrayOutput": {
+    "type": "array",
+    "value": "[variables('mixedArray')]"
+  },
+          "nameFromObject": {
+            "type": "string",
+            "value": "[parameters('exampleObject').name]"
+        },
+                  "nameObject": {
+            "type": "object",
+            "value": "[parameters('exampleObject')]"
+        }
+  }
+}
