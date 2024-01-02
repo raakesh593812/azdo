@@ -1,0 +1,68 @@
+trigger: none
+
+parameters:
+  - name: rg_name
+    displayName: Resource group name
+    type: string
+    default: chaitra-demo-rg
+  - name: Resource_name_deploy
+    displayName: Buid option
+    type: string
+    default: keyvault
+    values:
+      - --Select--
+      - keyvault
+      - Only_Coverity
+      - Only_Sonar
+      - Both_sonar_coverity
+  - name: env
+    displayName: environment
+    type: string
+    default: --Select--
+    values:
+      - --Select--
+      - dev
+      - uat
+      - prod
+      - test
+      
+pool: viv-poc
+
+stages:
+    - stage: deploy_azure_resource
+      variables:
+       - template: ../variables/${{parameters.Resource_name_deploy }}.yml
+      jobs:
+          - job: Replacetoken     
+            steps:
+            - task: replacetokens@5
+              inputs:
+                rootDirectory: '$(System.DefaultWorkingDirectory)/parameters'
+                targetFiles: '**/${{parameters.Resource_name_deploy }}*.json'
+                encoding: 'auto'
+                tokenPattern: 'default'
+                writeBOM: true
+                actionOnMissing: 'warn'
+                keepToken: false
+                actionOnNoFiles: 'warn'
+                enableTransforms: false
+                enableRecursion: false
+                useLegacyPattern: false
+                enableTelemetry: true
+            - task: AzureResourceManagerTemplateDeployment@3
+              name: armtsk
+              inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: 'Azure_chai_MSDN'
+                subscriptionId: '79bb5726-3587-4eae-928c-c33280a96aaa'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: '${{parameters.rg_name }}'
+                location: 'West US'
+                templateLocation: 'Linked artifact'
+                csmFile: '$(system.defaultworkingDirectory)/armtemplate/${{parameters.Resource_name_deploy }}.json'
+                csmParametersFile: '$(system.defaultworkingDirectory)/parameters/${{parameters.Resource_name_deploy }}-${{parameters.env }}.json'
+                deploymentMode: 'Incremental'
+                deploymentName: 'createvariable-1'
+                deploymentOutputs: 'ArmOutputs'
+            - task: printAllVariables@1
+
